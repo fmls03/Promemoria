@@ -59,6 +59,8 @@ def signin():
             alert = ("*ACCOUNT ALREADY EXISTS*")
         elif (len(username_used) > 0):
             alert = ("*USERNAME ALREADY USED*")
+        elif (len(passw) < 8 or any(map(str.isdigit, passw)) == F):
+            alert = ("* USE AT LEAST 8 CHARACTERS AND 1 NUMBER *")
         elif (passw != confirm_passw):
             alert = ("*CONFIRM THE RIGHT PASSWORD*")
         else:           
@@ -162,7 +164,7 @@ def logout():
     email = ""
     passw = ""
     id_acc = "" 
-    session['logged_in'] = False
+    session['logged_in'] = False  
     session.clear()
     return Home()
 
@@ -182,20 +184,14 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/changeImageProfile', methods = ('POST', ))
+@app.route('/changeImageProfile', methods = ('GET', 'POST'))
 def changeImageProfile():
     if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return redirect('/profile')
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect('/profile', filename=filename) 
+        if request.files == ['file_name'] != '':
+            print(request.files['file_name'])
+            return render_template('profile.html')
+    return render_template('profile.html') 
+            
 
 
 @app.route('/create', methods=('GET', 'POST'))
@@ -217,3 +213,4 @@ def create():
 
 if __name__ == "__main__":
     app.run("localhost", 5000, debug=True)
+    session_clear()
