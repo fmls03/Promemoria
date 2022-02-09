@@ -24,6 +24,7 @@ username = ""
 passw = ""
 
 
+
 @app.route('/')
 def session_clear():
     logout()
@@ -78,6 +79,7 @@ def signin():
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
+    logout()
     alert=""
     account = False
     global id_acc
@@ -154,7 +156,6 @@ def delete(idx): #usiamo 'idx' perchè 'id' darebbe problemi
     return redirect('/Promemoria')
 
 
-@app.route('/logout', methods=("POST", ))
 def logout():
     global username
     global email
@@ -171,27 +172,29 @@ def logout():
 
 @app.route('/profile', methods = ('GET', 'POST'))
 def profile():
+    alert =""
     if session.get("logged_in"):
-        connection = sqlite3.connect('database.db')
-        connection.row_factory = sqlite3.Row
+        changeImageProfile()
     else:
         return Home()
-    return render_template('profile.html', username=username, email=email) 
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route('/changeImageProfile', methods = ('GET', 'POST'))
-def changeImageProfile():
-    if request.method == 'POST':
-        if request.files == ['file_name'] != '':
-            print(request.files['file_name'])
-            return render_template('profile.html')
-    return render_template('profile.html') 
+    return render_template('profile.html', username=username, email=email, alert = alert) 
             
+
+@app.route('/changeImageProfile', methods=("GET", "POST"))
+def changeImageProfile():
+    alert = ""
+    if request.method == 'POST':        
+        file = request.files['file']
+        if file == "":
+            alert = "* NO FILE SELECTED *"
+            return redirect('/profile', alert = alert)
+        else:
+            filename = secure_filename(file.filename)
+            extension=filename.split(".")
+            extension=str(extension[1])
+            filename = str(id_acc) + "." + extension
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect('/profile')         
 
 
 @app.route('/create', methods=('GET', 'POST'))
