@@ -59,7 +59,7 @@ def signin():
             alert = ("*ACCOUNT ALREADY EXISTS*")
         elif (len(username_used) > 0):
             alert = ("*USERNAME ALREADY USED*")
-        elif (len(passw) < 8 or any(map(str.isdigit, passw)) == F):
+        elif (len(passw) < 8 or any(map(str.isdigit, passw)) == False):
             alert = ("* USE AT LEAST 8 CHARACTERS AND 1 NUMBER *")
         elif (passw != confirm_passw):
             alert = ("*CONFIRM THE RIGHT PASSWORD*")
