@@ -30,22 +30,24 @@
 
         <div class="card my-5">
 
-          <form class="card-body cardbody-color p-lg-5" method="post">
+     
+          
+
+          
 
             <div class="text-center">
               <img src="https://mpng.subpng.com/20180404/sqe/kisspng-computer-icons-user-profile-clip-art-big-5ac5283827d286.2570974715228703281631.jpg"
                 class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3" width="100px" alt="profile">
             </div>
-
-
-            <form action="/changeImageProfile" method="POST" enctype="multipart/form-data" style="align-items: center;">
-                <input type="file" name="file_name" class="form-control" style=" align-items: center;" required>        
-                <input type="submit" value="Submit "class="btn btn-primary btn-sm" style="float: right; font-size: small;">
-
-            </form>
-
-
-            
+            <form action = "/profile" method = "POST" enctype = "multipart/form-data" style="align-items: center;">             
+              <input type="file" name="file" class="form-control" style=" align-items: center;" required> {{ request.files['file'] }}</input>    
+              <input type="submit" value="Submit "class="btn btn-primary btn-sm" style="float: right; font-size: small;">
+              {% if alert %}
+                <div class="mb-3" style="color: red;">{{ alert }}</div>
+              {% endif%}
+          </form>
+          
+          <form class="card-body cardbody-color p-lg-5" method="post">
             <ul class="list-group">
               <li class="list-group-item" style="margin-bottom: 10px;"><h6 style="color: blue; font-size: small;">Username: </h6>{{username}}
                 <div>
@@ -63,8 +65,11 @@
 
             
             </ul>
-        </div>
-        </form>
+          </form>
+          </div>
+        
+
+        
       </div>
 
     </div>
