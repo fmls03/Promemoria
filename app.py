@@ -4,18 +4,20 @@ from passlib.hash import sha256_crypt
 from datetime import date
 import sqlite3
 from werkzeug.utils import secure_filename
-
+from os.path import join, dirname, realpath
 
 key = os.urandom(32)
 key = str(key)
 
 
-UPLOAD_FOLDER = 'ImageProfiles/'
+UPLOAD_FOLDER = 'ImageProfiles'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+UPLOADS_PATH = join(dirname(realpath(__file__)), 'ImageProfiles/..')
 
 app = Flask(__name__) # Modulo flask
 app.config['SECRET_KEY'] = key
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['ALLOWED_EXTENSIOS'] = ALLOWED_EXTENSIONS
 app.config['MAX_CONTENT_LENGTH'] = 16*1024*1024
 
 email = ""
@@ -180,21 +182,22 @@ def profile():
     return render_template('profile.html', username=username, email=email, alert = alert) 
             
 
-@app.route('/changeImageProfile', methods=("GET", "POST"))
 def changeImageProfile():
     alert = ""
-    if request.method == 'POST':        
+    if request.method == 'POST':
         file = request.files['file']
         if file == "":
             alert = "* NO FILE SELECTED *"
             return redirect('/profile', alert = alert)
         else:
-            filename = secure_filename(file.filename)
+            filename = str(secure_filename(file.filename))
             extension=filename.split(".")
             extension=str(extension[1])
             filename = str(id_acc) + "." + extension
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect('/profile')         
+            basedir = os.path.abspath(os.path.dirname(__file__))
+            file.save(os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename))           
+            return redirect('/profile')
+      
 
 
 @app.route('/create', methods=('GET', 'POST'))
